@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Entry {
+  id           String       @id @default(cuid())
+  audioUrl     String
+  transcript   String?
+  category     Category?
+  title        String?
+  tags         String[]
+  mood         String?
+  status       EntryStatus @default(PENDING)
+  recordedAt   DateTime
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  dailySummaries DailySummary[] @relation("SummaryEntries")
+
+  @@map("entries")
+}
+
+enum EntryStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model DailySummary {
+  id          String   @id @default(cuid())
+  date        DateTime @unique @db.Date
+  summaryText String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  entries     Entry[]  @relation("SummaryEntries")
+
+  @@map("daily_summaries")
+}
+
+enum Category {
+  IDEA
+  DREAM
+  PURCHASE
+  TASK
+  JOURNAL_NOTE
+  RANDOM_THOUGHT
+}
