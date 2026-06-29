@@ -30,12 +30,10 @@ export async function processEntry(entryId) {
       where: { id: entryId },
     });
 
-
     const transcription = await openai.audio.transcriptions.create({
       file: fs.createReadStream(entry.audioUrl),
       model: "whisper-1",
     });
-
 
     const response = await openai.responses.create({
       model: "gpt-4.1-mini",
@@ -52,7 +50,6 @@ export async function processEntry(entryId) {
     });
 
     const parsed = JSON.parse(response.output_text);
-
 
     await prisma.entry.update({
       where: { id: entryId },
