@@ -63,6 +63,7 @@ export async function processEntry(entryId) {
       },
     });
   } catch (err) {
+    console.error("processEntry failed:", err.message);
     await prisma.entry.update({
       where: { id: entryId },
       data: {
